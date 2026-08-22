@@ -30,7 +30,7 @@ public class clientHandler extends Thread {
 				<title>Test</title>
 			</head>
 			<body>
-				<h1>""" + dbBroker.testSelect() + "</h1>" +
+				<h1>""" + dbBroker.getInstance().testSelect() + "</h1>" +
 			"""
 			 </body>
 		 </html>
@@ -48,7 +48,23 @@ public class clientHandler extends Thread {
 			
 			String line;
 			while (!(line = in.readLine()).isBlank()) {
-				System.out.println(line);
+//				System.out.println(line);
+                String[] args = line.split(" ");
+                if (args[0].equals("GET")) {
+                    if (args[1].equals("/users")) {
+                        body = """
+                            <html>
+                                <head>
+                                    <title>Test</title>
+                                </head>
+                                <body>
+                                    <h1>""" + "/users" + "</h1>" +
+                                """
+                                 </body>
+                             </html>
+                        """;
+                    }
+                }
 			}
 	
 			String date = LocalDate.now().toString();
