@@ -52,5 +52,23 @@ public class Friend extends AbstractObject {
             + status.toString() +
         ")";
     }
+
+	@Override
+	public String getIDCondition() {
+		return 
+			" idUser="		 + user	 +
+			" AND ifFriend=" + friend;	
+	}
+	
+	@Override
+	public String getSelectCondition() {
+		return "";
+	}
+
+	@Override
+	public String getUpdate() {
+		return
+			"status='" + status.toString() + "'";
+	}
     
 }

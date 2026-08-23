@@ -81,5 +81,40 @@ public class User extends AbstractObject {
             + email +
         ")";
     }
+
+	@Override
+	public String getIDCondition() {
+		return " idUser=" + idUser;
+	}
+
+	@Override
+	public String getSelectCondition() {
+		String q = " WHERE 1=1";
+		if (idUser!=0) {
+			q += " AND idUser=" + idUser;
+		}
+		if (name != null) {
+			q += " AND name='" + name + "'";
+		}
+		if (username != null) {
+			q += " AND username='" + username + "'";
+		}
+		if (password != null) {
+			q += " AND password='" + password + "'";
+		}
+		if (email != null) {
+			q += " AND email='" + email + "'";
+		}
+		return q;
+	}
+
+	@Override
+	public String getUpdate() {
+		return
+			"name='"	 + name		+ "'," + 
+			"username='" + username + "'," +
+			"password='" + password + "'," + 
+			"email='"	 + email	+ "'"  ;
+	}
     
 }

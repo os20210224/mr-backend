@@ -1,6 +1,7 @@
 package db;
 
 import domain.AbstractObject;
+import domain.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -34,23 +35,8 @@ public class dbBroker {
 		}
 		return instance;
 	}
-	
-	public String testSelect() {
-		try {
-			String q =
-				"SELECT * FROM Throw WHERE idThrow=2";
-			Statement s = connection.createStatement();
-			ResultSet rs = s.executeQuery(q);
-			rs.next();
-			return "" + rs.getFloat("score");
-		} catch (SQLException e) {
-			System.out.println("> dbBroker testSelect exception: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
-	}
     
-    public Long create(AbstractObject ao) throws Exception {
+    public Long insert(AbstractObject ao) throws Exception {
         try {
             String q = "INSERT INTO " + ao.getTableName() + ao.getInsert();
 			PreparedStatement s = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
@@ -65,11 +51,100 @@ public class dbBroker {
 
             return id;
 		} catch (SQLException e) {
-			System.out.println("> dbBroker testSelect exception: " + e.getMessage());
+			System.out.println("> dbBroker create exception: " + e.getMessage());
 			e.printStackTrace();
             throw new Exception("dbBroker create exception: " + e);
 		}
     }
+	
+		public ResultSet select(AbstractObject ao) throws Exception {
+		ResultSet rs;
+		try {
+			String q =
+				"SELECT * FROM " + ao.getTableName()       +
+				" "				 + ao.getSelectCondition() ;
+			Statement s = connection.createStatement();
+			rs = s.executeQuery(q);
+		} catch (SQLException e) {
+			System.out.println("> dbBroker select exception: " + e);
+			e.printStackTrace();
+			throw new Exception("> dbBroker select exception: " + e);
+		}
+		return rs;
+	}
+	
+	public Void update(AbstractObject ao) throws Exception {
+		try {
+			String q =
+				"UPDATE "		+ ao.getTableName()		+
+				" SET "			+ ao.getUpdate()		+
+				" WHERE "		+ ao.getIDCondition()	;
+			Statement s = connection.createStatement();
+			s.executeUpdate(q);
+		} catch (SQLException e) {
+			System.out.println("> dbBroker update exception: " + e);
+			e.printStackTrace();
+			throw new Exception("> dbBroker update exception: " + e);
+		}
+		return null;
+	}
+	
+	public Void delete(AbstractObject ao) throws Exception {
+		try {
+			String q =
+				"DELETE FROM "	+ ao.getTableName()	 + 
+				" WHERE "		+ ao.getIDCondition();	
+			Statement s = connection.createStatement();
+			s.executeUpdate(q);
+		} catch (SQLException e) {
+			System.out.println("> dbBroker delete exception: " + e);
+			e.printStackTrace();
+			throw new Exception("> dbBroker delete exception: " + e);
+		}
+		return null;
+	}
+	
+	public ResultSet selectFriends(User user) throws Exception {
+		ResultSet rs;
+		try {
+			String q =
+				"SELECT * FROM User WHERE idUser IN ("		+ 
+					"SELECT friend FROM Friend WHERE user=" + user + 
+					" AND status='friends'"					+ 
+				") OR idUser IN ("							+ 
+					"SELECT user FROM Friend WHERE friend=" + user +
+					" AND status='friends'"					+ 
+				")";
+			Statement s = connection.createStatement();
+			rs = s.executeQuery(q);
+		} catch (SQLException e) {
+			System.out.println("> dbBroker selectFriends exception: " + e);
+			e.printStackTrace();
+			throw new Exception("> dbBroker selectFriends exception: " + e);
+		}
+		return rs;
+	}
+	
+	public ResultSet selectPendingFriends(User user) throws Exception {
+		ResultSet rs;
+		try {
+			String q =
+				"SELECT * FROM User WHERE idUser IN ("		+ 
+					"SELECT friend FROM Friend WHERE user=" + user + 
+					" AND status='pending'"					+ 
+				") OR idUser IN ("							+ 
+					"SELECT user FROM Friend WHERE friend=" + user +
+					" AND status='pending'"					+ 
+				")";
+			Statement s = connection.createStatement();
+			rs = s.executeQuery(q);
+		} catch (SQLException e) {
+			System.out.println("> dbBroker selectFriends exception: " + e);
+			e.printStackTrace();
+			throw new Exception("> dbBroker selectFriends exception: " + e);
+		}
+		return rs;
+	}
     
     public void commit() {
 		try {

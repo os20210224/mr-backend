@@ -71,5 +71,36 @@ public class Throw extends AbstractObject {
             + user.getIdUser()  +
         ")";
     }
+
+	@Override
+	public String getIDCondition() {
+		return " idThrow=" + idThrow;
+	}
+	
+	@Override
+	public String getSelectCondition() {
+		String q = " WHERE 1=1";
+		if (idThrow!=0) {
+			q += " AND idThrow=" + idThrow;
+		}
+		if (date != null) {
+			q += " AND date='" + date.toString() + "'";
+		}
+		if (score != 0) {
+			q += " AND score=" + score;
+		}
+		if (user != null) {
+			q += " AND user=" + user.getIdUser();
+		}
+		return q;
+	}
+	
+	@Override
+	public String getUpdate() {
+		return
+			"date='" + date.toString() + "'," +
+			"score=" + score		   + ","  + 
+			"user="	 + user.getIdUser()		  ;
+	}
     
 }
