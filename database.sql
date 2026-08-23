@@ -21,18 +21,18 @@ USE `mr-projekat`;
 DROP TABLE IF EXISTS `Friend`;
 
 CREATE TABLE `Friend` (
-  `idUser` bigint(20) NOT NULL CHECK (`idUser` < `idFriend`),
-  `idFriend` bigint(20) NOT NULL CHECK (`idFriend` > `idUser`),
+  `user` bigint(20) NOT NULL CHECK (`user` < `friend`),
+  `friend` bigint(20) NOT NULL CHECK (`friend` > `user`),
   `status` enum('pending','friends') NOT NULL,
-  PRIMARY KEY (`idUser`,`idFriend`),
-  KEY `friend_fk_friend` (`idFriend`),
-  CONSTRAINT `friend_fk_friend` FOREIGN KEY (`idFriend`) REFERENCES `User` (`idUser`),
-  CONSTRAINT `friend_fk_user` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
+  PRIMARY KEY (`user`,`friend`),
+  KEY `friend_fk_friend` (`friend`),
+  CONSTRAINT `friend_fk_friend` FOREIGN KEY (`friend`) REFERENCES `User` (`idUser`) ON DELETE CASCADE,
+  CONSTRAINT `friend_fk_user` FOREIGN KEY (`user`) REFERENCES `User` (`idUser`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `Friend` */
 
-insert  into `Friend`(`idUser`,`idFriend`,`status`) values 
+insert  into `Friend`(`user`,`friend`,`status`) values 
 (1,2,'friends');
 
 /*Table structure for table `Throw` */
@@ -46,8 +46,8 @@ CREATE TABLE `Throw` (
   `user` bigint(20) NOT NULL,
   PRIMARY KEY (`idThrow`),
   KEY `score_fk_user` (`user`),
-  CONSTRAINT `score_fk_user` FOREIGN KEY (`user`) REFERENCES `User` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `score_fk_user` FOREIGN KEY (`user`) REFERENCES `User` (`idUser`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `Throw` */
 
@@ -65,7 +65,7 @@ CREATE TABLE `User` (
   `password` varchar(512) NOT NULL,
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `User` */
 
