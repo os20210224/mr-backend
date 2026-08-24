@@ -8,44 +8,65 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.time.LocalDate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import controller.Controller;
-import domain.AbstractObject;
+import domain.Throw;
 import domain.User;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import so.user.getListUser;
+import util.parse_http.http_parser;
 
 public class clientHandler extends Thread {
 	
 	private Socket soket;
-	
-//	String body = """
-//		<html>
-//			<head>
-//				<title>Test</title>
-//			</head>
-//			<body>
-//				<h1>muka i tuga</h1>
-//			 </body>
-//		 </html>
-//	""";
-	
-	String body = """
-		<html>
-			<head>
-				<title>Test</title>
-			</head>
-			<body>
-				<h1>""" + "muka i tuga" + "</h1>" +
-			"""
-			 </body>
-		 </html>
-	""";
 
 	public clientHandler(Socket soket) {
 		this.soket = soket;
+	}
+	
+	private String handleRequest(http_parser htp) throws Exception {
+		ObjectMapper om = new ObjectMapper();
+		om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
+		
+		switch (htp.getMethod()) {
+			case GET:
+				switch(htp.getRoute()) {
+					case "/" -> {
+						return 
+							"""
+								<html>
+									<head>
+										<title>Test</title>
+									</head>
+									<body>
+										<h1>""" + "muka i tuga" + "</h1>" +
+									"""
+									 </body>
+								 </html>
+							""";
+					}
+					case "/user" -> {
+						List<User> users = Controller.getListUser(new User(htp.getId()));
+						return om.writeValueAsString(users); // pretvara objekat u json string
+					}
+					case "/throw" -> {
+						List<Throw> throwws = Controller.getListThrow(new Throw(htp.getId()));
+						return om.writeValueAsString(throwws);
+					}
+					case "/friend" -> {
+						List<User> friends = Controller.getListFriend(new User(htp.getId()));
+						return om.writeValueAsString(friends);
+					}
+					case "/friend/pending" -> {
+						List<User> friends = Controller.getListFriendPending(new User(htp.getId()));
+						return om.writeValueAsString(friends);
+					}
+				}
+			break;
+			case POST:
+			break;
+		}
+		return "";
 	}
 
 	@Override
@@ -54,24 +75,21 @@ public class clientHandler extends Thread {
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(soket.getOutputStream()));
 			BufferedReader in = new BufferedReader(new InputStreamReader(soket.getInputStream()));
 			
-			ObjectMapper om = new ObjectMapper();
-			
 			String line;
+			String header = "";
 			while (!(line = in.readLine()).isBlank()) {
-                String[] args = line.split(" ");
-				if (args[0].equals("GET")) {
-					try {
-						switch (args[1]) {
-							case "/users" -> {
-								List<User> users = Controller.getListUser(new User(0));
-								String json = om.writeValueAsString(users);
-								body = json;
-							}
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
+				header += line + "\n";
+			}
+			
+			http_parser htp = new http_parser(header);
+			System.out.println(htp.toString());
+			
+			String body = "";
+			
+			try {
+				body = handleRequest(htp);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 	
 			String date = LocalDate.now().toString();

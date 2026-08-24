@@ -1,11 +1,13 @@
 package domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class User extends AbstractObject {
     
     private long idUser;
     private String name;
     private String username;
-    private String password;
+    @JsonIgnore private String password;
     private String email;
 
     public User(long idUser, String name, String username, String password, String email) {
