@@ -92,6 +92,7 @@ public class Throw extends AbstractObject {
 		if (user != null) {
 			q += " AND user=" + user.getIdUser();
 		}
+		q += " ORDER BY score DESC";
 		return q;
 	}
 	
