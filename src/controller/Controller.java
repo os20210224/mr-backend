@@ -4,6 +4,10 @@ import domain.AbstractObject;
 import domain.Throw;
 import domain.User;
 import java.util.List;
+import so.friend.deleteFriend;
+import so.friend.getListFriend;
+import so.friend.getListFriendPending;
+import so.friend.insertFriend;
 import so.throww.deleteThrow;
 import so.throww.getListThrow;
 import so.throww.insertThrow;
@@ -48,6 +52,24 @@ public class Controller {
 	}
 	public static Void deleteThrow(AbstractObject ao) throws Exception {
 		deleteThrow so = new deleteThrow();
+		return so.execute(ao);
+	}
+	
+	// Friend
+	public static Long insertFriend(AbstractObject ao) throws Exception {
+		insertFriend so = new insertFriend();
+		return so.execute(ao);
+	}
+	public static List<Throw> getListFriend(AbstractObject ao) throws Exception {
+		getListFriend so = new getListFriend();
+		return so.execute(ao);
+	}
+	public static List<Throw> getListFriendPending(AbstractObject ao) throws Exception {
+		getListFriendPending so = new getListFriendPending();
+		return so.execute(ao);
+	}
+	public static Void deleteFriend(AbstractObject ao) throws Exception {
+		deleteFriend so = new deleteFriend();
 		return so.execute(ao);
 	}
 	
