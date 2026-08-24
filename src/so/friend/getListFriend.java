@@ -2,7 +2,6 @@ package so.friend;
 
 import db.dbBroker;
 import domain.AbstractObject;
-import domain.Friend;
 import domain.User;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -13,8 +12,8 @@ public class getListFriend extends AbstractSO<List> {
 	
 	@Override
 	protected void precondition(AbstractObject ao) throws Exception {
-		if (!(ao instanceof Friend)) {
-			throw new Exception("Objekat nije instanca Friend");
+		if (!(ao instanceof User)) {
+			throw new Exception("Objekat nije instanca User");
 		}
 	}
 

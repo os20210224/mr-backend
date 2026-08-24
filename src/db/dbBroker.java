@@ -109,10 +109,10 @@ public class dbBroker {
 		try {
 			String q =
 				"SELECT * FROM User WHERE idUser IN ("		+ 
-					"SELECT friend FROM Friend WHERE user=" + user + 
+					"SELECT friend FROM Friend WHERE user=" + user.getIdUser() + 
 					" AND status='friends'"					+ 
 				") OR idUser IN ("							+ 
-					"SELECT user FROM Friend WHERE friend=" + user +
+					"SELECT user FROM Friend WHERE friend=" + user.getIdUser() +
 					" AND status='friends'"					+ 
 				")";
 			Statement s = connection.createStatement();
@@ -130,10 +130,10 @@ public class dbBroker {
 		try {
 			String q =
 				"SELECT * FROM User WHERE idUser IN ("		+ 
-					"SELECT friend FROM Friend WHERE user=" + user + 
+					"SELECT friend FROM Friend WHERE user=" + user.getIdUser() + 
 					" AND status='pending'"					+ 
 				") OR idUser IN ("							+ 
-					"SELECT user FROM Friend WHERE friend=" + user +
+					"SELECT user FROM Friend WHERE friend=" + user.getIdUser() +
 					" AND status='pending'"					+ 
 				")";
 			Statement s = connection.createStatement();

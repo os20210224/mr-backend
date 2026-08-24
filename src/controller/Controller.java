@@ -8,6 +8,7 @@ import so.friend.deleteFriend;
 import so.friend.getListFriend;
 import so.friend.getListFriendPending;
 import so.friend.insertFriend;
+import so.friend.updateFriend;
 import so.throww.deleteThrow;
 import so.throww.getListThrow;
 import so.throww.insertThrow;
@@ -60,12 +61,16 @@ public class Controller {
 		insertFriend so = new insertFriend();
 		return so.execute(ao);
 	}
-	public static List<Throw> getListFriend(AbstractObject ao) throws Exception {
+	public static List<User> getListFriend(AbstractObject ao) throws Exception {
 		getListFriend so = new getListFriend();
 		return so.execute(ao);
 	}
-	public static List<Throw> getListFriendPending(AbstractObject ao) throws Exception {
+	public static List<User> getListFriendPending(AbstractObject ao) throws Exception {
 		getListFriendPending so = new getListFriendPending();
+		return so.execute(ao);
+	}
+	public static Void updateFriend(AbstractObject ao) throws Exception {
+		updateFriend so = new updateFriend();
 		return so.execute(ao);
 	}
 	public static Void deleteFriend(AbstractObject ao) throws Exception {
