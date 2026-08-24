@@ -1,22 +1,22 @@
 package domain;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class Throw extends AbstractObject {
     
     private long idThrow;
-    private LocalDateTime date;
+    private Timestamp date;
     private float score;
     private User user;
 
-    public Throw(long idThrow, LocalDateTime date, float score, User user) {
+    public Throw(long idThrow, Timestamp date, float score, User user) {
         this.idThrow = idThrow;
         this.date = date;
         this.score = score;
         this.user = user;
     }
 
-    public Throw(LocalDateTime date, float score, User user) {
+    public Throw(Timestamp date, float score, User user) {
         this.date = date;
         this.score = score;
         this.user = user;
@@ -34,11 +34,11 @@ public class Throw extends AbstractObject {
         this.idThrow = idThrow;
     }
 
-    public LocalDateTime getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

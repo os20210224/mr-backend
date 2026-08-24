@@ -29,7 +29,7 @@ public class getListThrow extends AbstractSO<List> {
 			)).get(0);
 			throwws.add(new Throw(
 				rs.getLong("idThrow"),
-				rs.getTimestamp("date").toLocalDateTime(),
+				rs.getTimestamp("date"),
 				rs.getFloat("score"),
 				user
 			));
