@@ -1,13 +1,14 @@
 package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User extends AbstractObject {
     
     private long idUser;
     private String name;
     private String username;
-    @JsonIgnore private String password;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) private String password;
     private String email;
 
     public User(long idUser, String name, String username, String password, String email) {
@@ -18,8 +19,12 @@ public class User extends AbstractObject {
         this.email = email;
     }
 
-    public User(String name, String username, String password, String email) {
-        this.name = name;
+    @JsonCreator public User(
+		@JsonProperty("name") String name,
+		@JsonProperty("username") String username,
+		@JsonProperty("password") String password,
+		@JsonProperty("email") String email) {
+		this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -76,12 +81,12 @@ public class User extends AbstractObject {
 
     @Override
     public String getInsert() {
-        return " (name,usrename,password,email) VALUES("
-            + name      + ","
-            + username  + ","
-            + password  + ","
-            + email +
-        ")";
+        return " (name,username,password,email) VALUES("
+            + "'" +  name      + "',"
+            + "'" +  username  + "',"
+            + "'" +  password  + "',"
+            + "'" +  email	   +
+        "')";
     }
 
 	@Override
