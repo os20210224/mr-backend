@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:7259/friend/pending/1
+  url: https://localhost:7259/friend/pending/1
   auth: inherit
 
 settings:

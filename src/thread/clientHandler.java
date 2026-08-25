@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import controller.Controller;
@@ -13,14 +12,16 @@ import domain.Throw;
 import domain.User;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import util.parse_http.http_request;
 import util.parse_http.http_response;
 
 public class clientHandler extends Thread {
 	
-	private Socket soket;
+	private SSLSocket soket;
 
-	public clientHandler(Socket soket) {
+	public clientHandler(SSLSocket soket) {
 		this.soket = soket;
 	}
 	
@@ -107,7 +108,12 @@ public class clientHandler extends Thread {
 
 	@Override
 	public void run() {
+		soket.setEnabledCipherSuites(soket.getSupportedCipherSuites());
 		try {
+			soket.startHandshake();
+			
+			SSLSession session = soket.getSession();
+			
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(soket.getOutputStream()));
 			BufferedReader in = new BufferedReader(new InputStreamReader(soket.getInputStream()));
 			
