@@ -12,6 +12,7 @@ import controller.Controller;
 import domain.Throw;
 import domain.User;
 import java.util.List;
+import java.util.Map;
 import util.parse_http.http_request;
 import util.parse_http.http_response;
 
@@ -28,7 +29,7 @@ public class clientHandler extends Thread {
 		om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
 		
 		switch (htp.getMethod()) {
-			case GET:
+			case GET -> {
 				switch(htp.getRoute()) {
 					case "/" -> {
 						String body = 
@@ -74,9 +75,31 @@ public class clientHandler extends Thread {
 						return new http_response(200, om.writeValueAsString(friends));
 					}
 				}
-			break;
-			case POST:
-			break;
+			}
+			case POST -> {
+				switch(htp.getRoute()) {
+					case "/user" -> {
+						User user = om.readValue(htp.getBody(), User.class);
+						try {
+							Long id = Controller.insertUser(user);
+							return new http_response(201, "{\"idUser\": \"" + id + "\"}");
+						} catch (Exception e) {
+							if (e.getMessage().contains("Duplicate entry")) {
+								return new http_response(400, "{\"error\": \"username and password must be unique\"}");
+							}
+						}
+					}
+					case "/throw" -> {
+						// TODO
+					}
+					case "/friend" -> {
+						// TODO
+					}
+					case "/friend/pending" -> {
+						// TODO
+					}
+				}
+			}
 		}			
 		
 		return new http_response(500);
@@ -90,12 +113,23 @@ public class clientHandler extends Thread {
 			
 			String line;
 			String request = "";
-			while (!(line = in.readLine()).isBlank()) {
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+				if (line.isEmpty()) {
+					Map<String, String> header = (new http_request(request)).getHeader();
+					if (!header.containsKey("Content-Length")) {
+						break;
+					}
+					int content_length = Integer.parseInt(header.get("Content-Length"));
+					char[] body = new char[content_length];
+					in.read(body, 0, content_length);
+					request += String.copyValueOf(body);
+					break;
+				}
 				request += line + "\n";
 			}
 			
 			http_request htp = new http_request(request);
-			System.out.println(htp.toString());
 			
 			http_response response;
 			

@@ -5,11 +5,12 @@ import java.util.Map;
 
 public class http_request {
 	
-	private Map<String, String> request = new HashMap<String, String>();
+	private Map<String, String> header = new HashMap<String, String>();
 	private httpMethod method;
 	private String route;
 	private long id;
 	private String httpVersion;
+	private String body;
 
 	public http_request(String header) {
 		String[] lines = header.split("\n");
@@ -30,9 +31,14 @@ public class http_request {
 		
 		httpVersion = firstLine[2].trim();
 		
+		String[] request = extractHeader(header);
+		body = request[1];
+		header = request[0];
+		lines = header.split("\n");
+		
 		for (int i = 1; i < lines.length; i++) {
 			String[] lineParts = lines[i].split(":");
-			this.request.put(lineParts[0].trim(), lineParts[1].trim());
+			this.header.put(lineParts[0].trim(), lineParts[1].trim());
 		}
 	}
 	
@@ -56,13 +62,26 @@ public class http_request {
 			slices[1] = c + slices[1];
 		}
 	}
+	
+	private String[] extractHeader(String header) {
+		String[] request = {header, ""};
+		for (int i = 0; i < header.length(); i++) {
+			char c = header.charAt(i);
+			if (c == '{' || c == '[') {
+				request[0] = header.substring(0, i - 1);
+				request[1] = header.substring(i, header.length());
+			}
+		}
+		return request;
+	}
 
 	@Override
 	public String toString() {
 		String h = "" + method + " " + route + " " + httpVersion + "\n";
-		for (Map.Entry<String, String> entry : request.entrySet()) {
+		for (Map.Entry<String, String> entry : header.entrySet()) {
 			h += entry.getKey() + ": " + entry.getValue() + "\n";
 		}
+		h += body;
 		return h;
 	}
 
@@ -96,6 +115,22 @@ public class http_request {
 
 	public void setHttpVersion(String httpVersion) {
 		this.httpVersion = httpVersion;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public Map<String, String> getHeader() {
+		return header;
+	}
+
+	public void setHeader(Map<String, String> header) {
+		this.header = header;
 	}
 	
 }
