@@ -3,21 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="mr-backend">
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/User.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/AbstractSO.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/thread/lobby.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/user/getListUser.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/throww/getListThrow.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/db/dbBroker.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/AbstractObject.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/user/insertUser.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/user/updateUser.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/main/server.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/Throw.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/user/deleteUser.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/controller/Controller.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/thread/clientHandler.java</file>
-            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/Friend.java</file>
+            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/util/parse_http/http_parser.java</file>
         </group>
     </open-files>
 </project-private>

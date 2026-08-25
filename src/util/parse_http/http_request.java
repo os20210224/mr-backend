@@ -3,15 +3,15 @@ package util.parse_http;
 import java.util.HashMap;
 import java.util.Map;
 
-public class http_parser {
+public class http_request {
 	
-	private Map<String, String> header = new HashMap<String, String>();
+	private Map<String, String> request = new HashMap<String, String>();
 	private httpMethod method;
 	private String route;
 	private long id;
 	private String httpVersion;
 
-	public http_parser(String header) {
+	public http_request(String header) {
 		String[] lines = header.split("\n");
 		String[] firstLine = lines[0].split(" ");
 		
@@ -32,7 +32,7 @@ public class http_parser {
 		
 		for (int i = 1; i < lines.length; i++) {
 			String[] lineParts = lines[i].split(":");
-			this.header.put(lineParts[0].trim(), lineParts[1].trim());
+			this.request.put(lineParts[0].trim(), lineParts[1].trim());
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class http_parser {
 	@Override
 	public String toString() {
 		String h = "" + method + " " + route + " " + httpVersion + "\n";
-		for (Map.Entry<String, String> entry : header.entrySet()) {
+		for (Map.Entry<String, String> entry : request.entrySet()) {
 			h += entry.getKey() + ": " + entry.getValue() + "\n";
 		}
 		return h;
