@@ -1,5 +1,7 @@
 package thread;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import so.SOException;
 import util.parse_http.http_request;
 import util.parse_http.http_response;
 
@@ -79,13 +82,33 @@ public class clientHandler extends Thread {
 			}
 			case POST -> {
 				switch(htp.getRoute()) {
-					case "/user" -> {
-						User user = om.readValue(htp.getBody(), User.class);
+					case "/login" -> {
 						try {
+							User user = om.readValue(htp.getBody(), User.class);
+							List<User> users = Controller.getListUser(user);
+							if (users.size() == 0) {
+								return new http_response(403, "{\"error\": \"wrong credentials\"}");
+							}
+							User existing = users.get(0);
+							if (!user.getEmail().equals(existing.getEmail())		||
+								!user.getUsername().equals(existing.getUsername())  ||
+								!user.getPassword().equals(existing.getPassword())) {
+								return new http_response(403, "{\"error\": \"wrong credentials\"}");
+							}
+							return new http_response(200, om.writeValueAsString(existing));
+						} catch (JsonProcessingException jsone) {
+							return new http_response(400, "{\"error\": \"User could not be parsed from json\"}");
+						}
+					}
+					case "/user" -> {
+						try {
+							User user = om.readValue(htp.getBody(), User.class);
 							Long id = Controller.insertUser(user);
 							return new http_response(201, "{\"idUser\": \"" + id + "\"}");
-						} catch (Exception e) {
-							if (e.getMessage().contains("Duplicate entry")) {
+						} catch (JsonProcessingException jsone) {
+							return new http_response(400, "{\"error\": \"User could not be parsed from json\"}");
+						} catch (SOException soe) {
+							if (soe.getMessage().contains("Duplicate entry")) {
 								return new http_response(400, "{\"error\": \"username and password must be unique\"}");
 							}
 						}

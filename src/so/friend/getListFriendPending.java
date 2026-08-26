@@ -7,18 +7,20 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import so.AbstractSO;
+import java.sql.SQLException;
+import so.SOException;
 
 public class getListFriendPending extends AbstractSO<List> {
 	
 	@Override
-	protected void precondition(AbstractObject ao) throws Exception {
+	protected void precondition(AbstractObject ao) throws SOException {
 		if (!(ao instanceof User)) {
-			throw new Exception("Objekat nije instanca User");
+			throw new SOException("Objekat nije instanca User");
 		}
 	}
 
 	@Override
-	protected List transaction(AbstractObject ao) throws Exception {
+	protected List transaction(AbstractObject ao) throws SQLException {
 		List<User> users = new ArrayList<>();
 		ResultSet rs = dbBroker.getInstance().selectPendingFriends((User) ao);
 		while (rs.next()) {

@@ -36,7 +36,7 @@ public class dbBroker {
 		return instance;
 	}
     
-    public Long insert(AbstractObject ao) throws Exception {
+    public Long insert(AbstractObject ao) throws SQLException {
         try {
             String q = "INSERT INTO " + ao.getTableName() + ao.getInsert();
 			PreparedStatement s = connection.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
@@ -53,11 +53,11 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker create exception: " + e.getMessage());
 			e.printStackTrace();
-            throw new Exception("dbBroker create exception: " + e);
+            throw new SQLException("dbBroker create exception: " + e);
 		}
     }
 	
-		public ResultSet select(AbstractObject ao) throws Exception {
+		public ResultSet select(AbstractObject ao) throws SQLException {
 		ResultSet rs;
 		try {
 			String q =
@@ -68,12 +68,12 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker select exception: " + e);
 			e.printStackTrace();
-			throw new Exception("> dbBroker select exception: " + e);
+			throw new SQLException("> dbBroker select exception: " + e);
 		}
 		return rs;
 	}
 	
-	public Void update(AbstractObject ao) throws Exception {
+	public Void update(AbstractObject ao) throws SQLException {
 		try {
 			String q =
 				"UPDATE "		+ ao.getTableName()		+
@@ -84,12 +84,12 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker update exception: " + e);
 			e.printStackTrace();
-			throw new Exception("> dbBroker update exception: " + e);
+			throw new SQLException("> dbBroker update exception: " + e);
 		}
 		return null;
 	}
 	
-	public Void delete(AbstractObject ao) throws Exception {
+	public Void delete(AbstractObject ao) throws SQLException {
 		try {
 			String q =
 				"DELETE FROM "	+ ao.getTableName()	 + 
@@ -99,12 +99,12 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker delete exception: " + e);
 			e.printStackTrace();
-			throw new Exception("> dbBroker delete exception: " + e);
+			throw new SQLException("> dbBroker delete exception: " + e);
 		}
 		return null;
 	}
 	
-	public ResultSet selectFriends(User user) throws Exception {
+	public ResultSet selectFriends(User user) throws SQLException {
 		ResultSet rs;
 		try {
 			String q =
@@ -120,12 +120,12 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker selectFriends exception: " + e);
 			e.printStackTrace();
-			throw new Exception("> dbBroker selectFriends exception: " + e);
+			throw new SQLException("> dbBroker selectFriends exception: " + e);
 		}
 		return rs;
 	}
 	
-	public ResultSet selectPendingFriends(User user) throws Exception {
+	public ResultSet selectPendingFriends(User user) throws SQLException {
 		ResultSet rs;
 		try {
 			String q =
@@ -141,7 +141,7 @@ public class dbBroker {
 		} catch (SQLException e) {
 			System.out.println("> dbBroker selectFriends exception: " + e);
 			e.printStackTrace();
-			throw new Exception("> dbBroker selectFriends exception: " + e);
+			throw new SQLException("> dbBroker selectFriends exception: " + e);
 		}
 		return rs;
 	}

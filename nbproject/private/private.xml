@@ -5,7 +5,9 @@
         <group name="mr-backend">
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/User.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/main/server.java</file>
+            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/AbstractSO.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/thread/lobby.java</file>
+            <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/controller/Controller.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/util/parse_http/http_response.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/util/parse_http/http_request.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/thread/clientHandler.java</file>
