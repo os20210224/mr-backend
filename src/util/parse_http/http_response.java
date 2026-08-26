@@ -9,6 +9,7 @@ public class http_response {
 	private String date = LocalDate.now().toString();
 	private String serverName = "mr-backend/0.1";
 	private String contentType = "application/json; charset=UTF-8";
+	private String accessControlOrigin = "http://localhost:8100";
 	private String body = "";
 
 	public http_response() {
@@ -66,12 +67,15 @@ public class http_response {
 	@Override
 	public String toString() {
 		return 
-			"HTTP/1.1 "			+ status		+ "\r\n" +
-			"Date: "			+ date			+ "\r\n" +
-			"Server: "			+ serverName	+ "\r\n" +
-			"Content-Type: "	+ contentType	+ "\r\n"+
-			"Content-Length: "	+ body.getBytes(StandardCharsets.UTF_8).length	+ "\r\n"+
-			"Connection: close\r\n\r\n"			+ body;
+			"HTTP/1.1 "						+ status										+ "\r\n" +
+			"Date: "						+ date											+ "\r\n" +
+			"Server: "						+ serverName									+ "\r\n" +
+			"Content-Type: "				+ contentType									+ "\r\n" +
+			"Content-Length: "				+ body.getBytes(StandardCharsets.UTF_8).length	+ "\r\n" +
+			"Access-Control-Allow-Origin: "	+ accessControlOrigin							+ "\r\n" + 
+			"Access-Control-Allow-Methods: GET, POST"										+ "\r\n" + 
+			"Access-Control-Allow-Headers: Content-Type"									+ "\r\n" + 
+			"Connection: close\r\n\r\n"		+ body;
 	}
 	
 }

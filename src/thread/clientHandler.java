@@ -1,7 +1,6 @@
 package thread;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
