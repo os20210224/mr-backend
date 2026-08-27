@@ -30,6 +30,11 @@ public class User extends AbstractObject {
         this.email = email;
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
+    
     public User(long idUser) {
         this.idUser = idUser;
     }

@@ -84,15 +84,13 @@ public class clientHandler extends Thread {
 					case "/login" -> {
 						try {
 							User user = om.readValue(htp.getBody(), User.class);
-							List<User> users = Controller.getListUser(user);
+							List<User> users = Controller.getListUser(new User(user.getUsername()));
 							if (users.size() == 0) {
-								return new http_response(403, "{\"error\": \"wrong credentials\"}");
+								return new http_response(403, "{\"error\": \"wrong username\"}");
 							}
 							User existing = users.get(0);
-							if (!user.getEmail().equals(existing.getEmail())		||
-								!user.getUsername().equals(existing.getUsername())  ||
-								!user.getPassword().equals(existing.getPassword())) {
-								return new http_response(403, "{\"error\": \"wrong credentials\"}");
+							if (!user.getPassword().equals(existing.getPassword())) {
+								return new http_response(403, "{\"error\": \"wrong password\"}");
 							}
 							return new http_response(200, om.writeValueAsString(existing));
 						} catch (JsonProcessingException jsone) {

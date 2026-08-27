@@ -1,7 +1,7 @@
 info:
-  name: login_wrong
+  name: login_wrong_username
   type: http
-  seq: 11
+  seq: 12
 
 http:
   method: POST
@@ -10,9 +10,8 @@ http:
     type: json
     data: |-
       {
-        "username": "test",
-        "password": "ne test",
-        "email": "test@test.test"
+        "username": "ne test",
+        "password": "test"
       }
   auth: inherit
 
@@ -21,3 +20,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true
