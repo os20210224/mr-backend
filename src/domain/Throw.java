@@ -1,6 +1,7 @@
 package domain;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class Throw extends AbstractObject {
     
@@ -78,22 +79,30 @@ public class Throw extends AbstractObject {
 	}
 	
 	@Override
-	public String getSelectCondition() {
+	public ArrayList<Object> getSelectCondition() {
+		ArrayList<Object> values = new ArrayList<>();
 		String q = " WHERE 1=1";
 		if (idThrow!=0) {
-			q += " AND idThrow=" + idThrow;
+			q += " AND idThrow=?";
+			values.add(idThrow);
 		}
 		if (date != null) {
-			q += " AND date='" + date.toString() + "'";
+			q += " AND date=?";
+			values.add(date.toString());
 		}
 		if (score != 0) {
-			q += " AND score=" + score;
+			q += " AND score=?";
+			values.add(score);
 		}
 		if (user != null) {
-			q += " AND user=" + user.getIdUser();
+			q += " AND user=?";
+			values.add(user.getIdUser());
 		}
 		q += " ORDER BY score DESC";
-		return q;
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
 	
 	@Override

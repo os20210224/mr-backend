@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.ArrayList;
+
 public class Friend extends AbstractObject {
     private long user;
     private long friend;
@@ -61,8 +63,10 @@ public class Friend extends AbstractObject {
 	}
 	
 	@Override
-	public String getSelectCondition() {
-		return "";
+	public ArrayList<Object> getSelectCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add("");
+		return ret;
 	}
 
 	@Override

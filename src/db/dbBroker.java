@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class dbBroker {
 	
@@ -60,11 +61,25 @@ public class dbBroker {
 		public ResultSet select(AbstractObject ao) throws SQLException {
 		ResultSet rs;
 		try {
+			ArrayList<Object> lista = ao.getSelectCondition();
 			String q =
-				"SELECT * FROM " + ao.getTableName()       +
-				" "				 + ao.getSelectCondition() ;
-			Statement s = connection.createStatement();
-			rs = s.executeQuery(q);
+				"SELECT * FROM " + ao.getTableName() +
+				" "				 + lista.get(0)		 ;
+			PreparedStatement s = connection.prepareStatement(q);
+			ArrayList<Object> values = (ArrayList<Object>) lista.get(1);
+			System.out.println(q);
+			System.out.println(values);
+			for (int i = 0; i < values.size(); i++) {
+				System.out.println(values.get(i));
+				switch (values.get(i)) {
+					case String str -> s.setString(i+1, str); // result set e indeksira od keca a ne od nule jer je uklet
+					case Long l -> s.setLong(i+1, l);
+					case Float f -> s.setFloat(i+1, f);
+					default -> throw new IllegalStateException("Unexpected value: " + values.get(i));
+				}
+			}
+			System.out.println(s);
+			rs = s.executeQuery();
 		} catch (SQLException e) {
 			System.out.println("> dbBroker select exception: " + e);
 			e.printStackTrace();
