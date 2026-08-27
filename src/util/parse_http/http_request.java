@@ -70,6 +70,7 @@ public class http_request {
 			if (c == '{' || c == '[') {
 				request[0] = header.substring(0, i - 1);
 				request[1] = header.substring(i, header.length());
+                                break;
 			}
 		}
 		return request;
