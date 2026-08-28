@@ -65,17 +65,26 @@ public class Throw extends AbstractObject {
     }
 
     @Override
-    public String getInsert() {
-        return " (date,score,user) VALUES("
-            + date.toString()   + ","
-            + score             + ","
-            + user.getIdUser()  +
-        ")";
+	public ArrayList<Object> getInsert() {
+		ArrayList<Object> ret = new ArrayList<>();
+        String q = " (date,score,user) VALUES(?,?,?)";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(date.toString());
+		values.add(score);
+		values.add(user.getIdUser());
+		ret.add(q);
+		ret.add(values);
+		return ret;
     }
 
 	@Override
-	public String getIDCondition() {
-		return " idThrow=" + idThrow;
+	public ArrayList<Object> getIDCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(" idThrow=?");
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(idThrow);
+		ret.add(values);
+		return ret;
 	}
 	
 	@Override
@@ -106,11 +115,16 @@ public class Throw extends AbstractObject {
 	}
 	
 	@Override
-	public String getUpdate() {
-		return
-			"date='" + date.toString() + "'," +
-			"score=" + score		   + ","  + 
-			"user="	 + user.getIdUser()		  ;
+	public ArrayList<Object> getUpdate() {
+		ArrayList<Object> ret = new ArrayList<>();
+		String q = "date=?,score=?,user=?";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(date.toString());
+		values.add(score);
+		values.add(user.getIdUser());
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
     
 }

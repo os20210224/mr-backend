@@ -86,18 +86,27 @@ public class User extends AbstractObject {
     }
 
     @Override
-    public String getInsert() {
-        return " (name,username,password,email) VALUES("
-            + "'" +  name      + "',"
-            + "'" +  username  + "',"
-            + "'" +  password  + "',"
-            + "'" +  email	   +
-        "')";
+    public ArrayList<Object> getInsert() {
+		ArrayList<Object> ret = new ArrayList<>();
+        String q = " (name,username,password,email) VALUES(?,?,?,?)";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(name);
+		values.add(username);
+		values.add(password);
+		values.add(email);
+		ret.add(q);
+		ret.add(values);
+		return ret;
     }
 
 	@Override
-	public String getIDCondition() {
-		return " idUser=" + idUser;
+	public ArrayList<Object> getIDCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(" idUser=?");
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(idUser);
+		ret.add(values);
+		return ret;
 	}
 
 	@Override
@@ -131,12 +140,17 @@ public class User extends AbstractObject {
 	}
 
 	@Override
-	public String getUpdate() {
-		return
-			"name='"	 + name		+ "'," + 
-			"username='" + username + "'," +
-			"password='" + password + "'," + 
-			"email='"	 + email	+ "'"  ;
+	public ArrayList<Object> getUpdate() {
+		ArrayList<Object> ret = new ArrayList<>();
+		String q = "name=?,username=?,password=?,email=?";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(name);
+		values.add(username);
+		values.add(password);
+		values.add(email);
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
     
 }
