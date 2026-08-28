@@ -3,6 +3,7 @@ package controller;
 import domain.AbstractObject;
 import domain.Throw;
 import domain.User;
+import java.util.ArrayList;
 import java.util.List;
 import so.SOException;
 import so.friend.deleteFriend;
@@ -18,9 +19,9 @@ import so.user.deleteUser;
 import so.user.getListUser;
 import so.user.insertUser;
 import so.user.updateUser;
+import com.auth0.jwt.interfaces.Claim;
 
 public class Controller {
-	
 	// User
 	public static Long insertUser(AbstractObject ao) throws SOException {
 		insertUser so = new insertUser();

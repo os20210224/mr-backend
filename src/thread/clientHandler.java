@@ -1,5 +1,12 @@
 package thread;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,169 +18,254 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import controller.Controller;
 import domain.Throw;
 import domain.User;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import so.SOException;
+import util.parse_http.httpMethod;
 import util.parse_http.http_request;
 import util.parse_http.http_response;
 
 public class clientHandler extends Thread {
-	
-	private SSLSocket soket;
 
-	public clientHandler(SSLSocket soket) {
-		this.soket = soket;
-	}
-	
-	private http_response handleRequest(http_request htp) throws Exception {
-		ObjectMapper om = new ObjectMapper();
-		om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
-		
-		switch (htp.getMethod()) {
-			case GET -> {
-				switch(htp.getRoute()) {
-					case "/" -> {
-						String body = 
-							"""
+    private SSLSocket soket;
+
+    public clientHandler(SSLSocket soket) {
+        this.soket = soket;
+    }
+
+    private http_response handleRequest(http_request htp) throws Exception {
+        ObjectMapper om = new ObjectMapper();
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
+        
+        if(htp.getMethod()==httpMethod.POST && htp.getRoute().equals("/login")){
+                        try {
+                            User user = om.readValue(htp.getBody(), User.class);
+                            List<User> users = Controller.getListUser(new User(user.getUsername()));
+                            if (users.size() == 0) {
+                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
+                            }
+                            User existing = users.get(0);
+                            if (!user.getPassword().equals(existing.getPassword())) {
+                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
+                            }
+                            String jwt = generateToken(existing.getIdUser());
+                            Object[] response = {existing, Map.of("token", jwt)};
+                            return new http_response(200, om.writeValueAsString(response));
+                        } catch (JsonProcessingException jsone) {
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+                        }
+                    }
+        String poruka=tokenHandle(htp.getHeader().getOrDefault("Authorization", "Unauthorised1"));
+        if(!poruka.equals("")){
+            return new http_response(401, om.writeValueAsString(Map.of("error", poruka)));
+        }
+        switch (htp.getMethod()) {
+            case GET -> {
+                switch (htp.getRoute()) {
+                    case "/" -> {
+                        String body
+                                = """
 								<html>
 									<head>
 										<title>Test</title>
 									</head>
 									<body>
-										<h1>""" + "muka i tuga" + "</h1>" +
-									"""
+										<h1>""" + "muka i tuga" + "</h1>"
+                                + """
 									 </body>
 								 </html>
 							""";
-						return new http_response(200, body);
-					}
-					case "/user" -> {
-						List<User> users = Controller.getListUser(new User(htp.getId()));
-						if (users.size() == 0 && htp.getId() != 0) {
-							return new http_response(404);
-						}
-						return new http_response(200, om.writeValueAsString(users)); // om-ova metoda pretvara objekat u json string
-					}
-					case "/throw" -> {
-						List<Throw> throwws = Controller.getListThrow(new Throw(htp.getId()));
-						if (throwws.size() == 0 && htp.getId() != 0) {
-							return new http_response(404);
-						}
-						return new http_response(200, om.writeValueAsString(throwws));
-					}
-					case "/friend" -> {
-						List<User> friends = Controller.getListFriend(new User(htp.getId()));
-						if (friends.size() == 0 && htp.getId() != 0) {
-							return new http_response(404);
-						}
-						return new http_response(200, om.writeValueAsString(friends));
-					}
-					case "/friend/pending" -> {
-						List<User> friends = Controller.getListFriendPending(new User(htp.getId()));
-						if (friends.size() == 0 && htp.getId() != 0) {
-							return new http_response(404);
-						}
-						return new http_response(200, om.writeValueAsString(friends));
-					}
-				}
-			}
-			case POST -> {
-				switch(htp.getRoute()) {
-					case "/login" -> {
-						try {
-							User user = om.readValue(htp.getBody(), User.class);
-							List<User> users = Controller.getListUser(new User(user.getUsername()));
-							if (users.size() == 0) {
-								return new http_response(403, "{\"error\": \"wrong username\"}");
-							}
-							User existing = users.get(0);
-							if (!user.getPassword().equals(existing.getPassword())) {
-								return new http_response(403, "{\"error\": \"wrong password\"}");
-							}
-							return new http_response(200, om.writeValueAsString(existing));
-						} catch (JsonProcessingException jsone) {
-							return new http_response(400, "{\"error\": \"User could not be parsed from json\"}");
-						}
-					}
-					case "/user" -> {
-						try {
-							User user = om.readValue(htp.getBody(), User.class);
-							Long id = Controller.insertUser(user);
-							return new http_response(201, "{\"idUser\": \"" + id + "\"}");
-						} catch (JsonProcessingException jsone) {
-							return new http_response(400, "{\"error\": \"User could not be parsed from json\"}");
-						} catch (SOException soe) {
-							if (soe.getMessage().contains("Duplicate entry")) {
-								return new http_response(400, "{\"error\": \"username and password must be unique\"}");
-							}
-						}
-					}
-					case "/throw" -> {
-						// TODO
-					}
-					case "/friend" -> {
-						// TODO
-					}
-					case "/friend/pending" -> {
-						// TODO
-					}
-				}
-			}
-		}			
-		
-		return new http_response(500);
-	}
+                        return new http_response(200, body);
+                    }
+                    case "/user" -> {
+                        List<User> users = Controller.getListUser(new User(htp.getId()));
+                        if (users.size() == 0 && htp.getId() != 0) {
+                            return new http_response(404);
+                        }
+                        return new http_response(200, om.writeValueAsString(users)); // om-ova metoda pretvara objekat u json string
+                    }
+                    case "/throw" -> {
+                        List<Throw> throwws = Controller.getListThrow(new Throw(htp.getId()));
+                        if (throwws.size() == 0 && htp.getId() != 0) {
+                            return new http_response(404);
+                        }
+                        return new http_response(200, om.writeValueAsString(throwws));
+                    }
+                    case "/friend" -> {
+                        List<User> friends = Controller.getListFriend(new User(htp.getId()));
+                        if (friends.size() == 0 && htp.getId() != 0) {
+                            return new http_response(404);
+                        }
+                        return new http_response(200, om.writeValueAsString(friends));
+                    }
+                    case "/friend/pending" -> {
+                        List<User> friends = Controller.getListFriendPending(new User(htp.getId()));
+                        if (friends.size() == 0 && htp.getId() != 0) {
+                            return new http_response(404);
+                        }
+                        return new http_response(200, om.writeValueAsString(friends));
+                    }
+                }
+            }
+            case POST -> {
+                switch (htp.getRoute()) {
+//                    case "/login" -> {
+//                        try {
+//                            User user = om.readValue(htp.getBody(), User.class);
+//                            List<User> users = Controller.getListUser(new User(user.getUsername()));
+//                            if (users.size() == 0) {
+//                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
+//                            }
+//                            User existing = users.get(0);
+//                            if (!user.getPassword().equals(existing.getPassword())) {
+//                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
+//                            }
+//                            String jwt = generateToken(existing.getIdUser());
+//                            Object[] response = {existing, Map.of("token", jwt)};
+//                            return new http_response(200, om.writeValueAsString(response));
+//                        } catch (JsonProcessingException jsone) {
+//                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+//                        }
+//                    }
+                    case "/user" -> {
+                        try {
+                            User user = om.readValue(htp.getBody(), User.class);
+                            Long id = Controller.insertUser(user);
+                            return new http_response(201, om.writeValueAsString(Map.of("iduser", "id")));
+                        } catch (JsonProcessingException jsone) {
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+                        } catch (SOException soe) {
+                            if (soe.getMessage().contains("Duplicate entry")) {
+                                return new http_response(400, om.writeValueAsString(Map.of("error", "username and password must be uniqe")));
+                            }
+                        }
+                    }
+                    case "/throw" -> {
+                        // TODO
+                    }
+                    case "/friend" -> {
+                        // TODO
+                    }
+                    case "/friend/pending" -> {
+                        // TODO
+                    }
+                }
+            }
+        }
 
-	@Override
-	public void run() {
-		soket.setEnabledCipherSuites(soket.getSupportedCipherSuites());
-		try {
-			soket.startHandshake();
-			
-			SSLSession session = soket.getSession();
-			
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(soket.getOutputStream()));
-			BufferedReader in = new BufferedReader(new InputStreamReader(soket.getInputStream()));
-			
-			String line;
-			String request = "";
-			while ((line = in.readLine()) != null) {
-				System.out.println(line);
-				if (line.isEmpty()) {
-					Map<String, String> header = (new http_request(request)).getHeader();
-					if (!header.containsKey("Content-Length")) {
-						break;
-					}
-					int content_length = Integer.parseInt(header.get("Content-Length"));
-					char[] body = new char[content_length];
-					in.read(body, 0, content_length);
-					request += String.copyValueOf(body);
-					break;
-				}
-				request += line + "\n";
-			}
-			
-			http_request htp = new http_request(request);
-			
-			http_response response;
-			
-			try {
-				response = handleRequest(htp);
-			} catch (Exception ex) {
-				response = new http_response(500);
-				ex.printStackTrace();
-			}
-			
-			out.write(response.toString());
-			out.flush();
-			
-			soket.close();
-		} catch (IOException e) {
-			System.out.println("> clientHandler exception: " + e);
-			e.printStackTrace();
-		}
-	}
-	
+        return new http_response(500);
+    }
+
+    @Override
+    public void run() {
+        soket.setEnabledCipherSuites(soket.getSupportedCipherSuites());
+        try {
+            soket.startHandshake();
+
+            SSLSession session = soket.getSession();
+
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(soket.getOutputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(soket.getInputStream()));
+
+            String line;
+            String request = "";
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+                if (line.isEmpty()) {
+                    Map<String, String> header = (new http_request(request)).getHeader();
+                    if (!header.containsKey("Content-Length")) {
+                        break;
+                    }
+                    int content_length = Integer.parseInt(header.get("Content-Length"));
+                    char[] body = new char[content_length];
+                    in.read(body, 0, content_length);
+                    request += String.copyValueOf(body);
+                    break;
+                }
+                request += line + "\n";
+            }
+
+            http_request htp = new http_request(request);
+
+            http_response response;
+
+            try {
+                response = handleRequest(htp);
+            } catch (Exception ex) {
+                response = new http_response(500);
+                ex.printStackTrace();
+            }
+
+            out.write(response.toString());
+            out.flush();
+
+            soket.close();
+        } catch (IOException e) {
+            System.out.println("> clientHandler exception: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    private String generateToken(long id) { //generise token gde je kljuc trenutno definisan lokalno, a algoritam sam bukv gadjao coravo
+        String id_user = String.valueOf(id);
+        String trenutniKljuc = "Sve_cu_da_pretvorim_u_pepeo_i_dim";
+        Algorithm algorithm = Algorithm.HMAC256(trenutniKljuc);
+
+        String token = JWT.create()
+                .withIssuer("gugalj")
+                .withSubject(id_user)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 604800000))
+                .sign(algorithm);
+
+        System.out.println(token);
+        return token;//xxxx.yyyyy.zzzzz
+    }
+
+    private boolean decodeToken(String token) {
+        try {
+            String trenutniKljuc = "Sve_cu_da_pretvorim_u_pepeo_i_dim";
+            Algorithm algorithm = Algorithm.HMAC256(trenutniKljuc);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("gugalj")
+                    .build();
+            DecodedJWT jwt = verifier.verify(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    
+
+    private String tokenHandle(String header) {
+        String[] token=header.split(" ");
+        if(token.length==1){
+            return "Unauthorised";
+        }
+        try {
+            String trenutniKljuc = "Sve_cu_da_pretvorim_u_pepeo_i_dim";
+            Algorithm algorithm = Algorithm.HMAC256(trenutniKljuc);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("gugalj")
+                    .build();
+            DecodedJWT jwt = verifier.verify(token[1]);
+            return "";
+
+        } catch (TokenExpiredException e) {
+            System.out.println("Istekao je token");
+            return "Token expired";
+        } catch (JWTVerificationException e) {
+            System.out.println("Nije verifikovan");
+            return "Unauthorised";
+        }catch(Exception e){
+            System.out.println("Nepredvidjeni izuzetak "+e.getMessage());
+            return "Idk man i just work here";
+        }
+    }
 }
