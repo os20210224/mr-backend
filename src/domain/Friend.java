@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.ArrayList;
+
 public class Friend extends AbstractObject {
     private long user;
     private long friend;
@@ -45,30 +47,45 @@ public class Friend extends AbstractObject {
     }
 
     @Override
-    public String getInsert() {
-        return " (user,friend,status) VALUES("
-            + user              + ","
-            + friend            + ","
-            + status.toString() +
-        ")";
+	public ArrayList<Object> getInsert() {
+		ArrayList<Object> ret = new ArrayList<>();
+        String q = " (user,friend,status) VALUES(?,?,?)";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(user);
+		values.add(friend);
+		values.add(status.toString());
+		ret.add(q);
+		ret.add(values);
+		return ret;
     }
 
 	@Override
-	public String getIDCondition() {
-		return 
-			" idUser="		 + user	 +
-			" AND ifFriend=" + friend;	
+	public ArrayList<Object> getIDCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(" idUser=? AND idFriend=?");
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(user);
+		values.add(friend);
+		ret.add(values);
+		return ret;
 	}
 	
 	@Override
-	public String getSelectCondition() {
-		return "";
+	public ArrayList<Object> getSelectCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add("");
+		return ret;
 	}
 
 	@Override
-	public String getUpdate() {
-		return
-			"status='" + status.toString() + "'";
+	public ArrayList<Object> getUpdate() {
+		ArrayList<Object> ret = new ArrayList<>();
+		String q = "status=?";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(status.toString());
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
     
 }

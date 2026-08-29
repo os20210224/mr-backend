@@ -2,6 +2,7 @@ package domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
 public class User extends AbstractObject {
     
@@ -85,48 +86,71 @@ public class User extends AbstractObject {
     }
 
     @Override
-    public String getInsert() {
-        return " (name,username,password,email) VALUES("
-            + "'" +  name      + "',"
-            + "'" +  username  + "',"
-            + "'" +  password  + "',"
-            + "'" +  email	   +
-        "')";
+    public ArrayList<Object> getInsert() {
+		ArrayList<Object> ret = new ArrayList<>();
+        String q = " (name,username,password,email) VALUES(?,?,?,?)";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(name);
+		values.add(username);
+		values.add(password);
+		values.add(email);
+		ret.add(q);
+		ret.add(values);
+		return ret;
     }
 
 	@Override
-	public String getIDCondition() {
-		return " idUser=" + idUser;
+	public ArrayList<Object> getIDCondition() {
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(" idUser=?");
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(idUser);
+		ret.add(values);
+		return ret;
 	}
 
 	@Override
-	public String getSelectCondition() {
+	public ArrayList<Object> getSelectCondition() {
+		ArrayList<Object> values = new ArrayList<>();
 		String q = " WHERE 1=1";
 		if (idUser!=0) {
-			q += " AND idUser=" + idUser;
+			q += " AND idUser=?";
+			values.add(idUser);
 		}
 		if (name != null) {
-			q += " AND name='" + name + "'";
+			q += " AND name=?";
+			values.add(name);
 		}
 		if (username != null) {
-			q += " AND username='" + username + "'";
+			q += " AND username=?";
+			values.add(username);
 		}
 		if (password != null) {
-			q += " AND password='" + password + "'";
+			q += " AND password=?";
+			values.add(password);
 		}
 		if (email != null) {
-			q += " AND email='" + email + "'";
+			q += " AND email=?";
+			values.add(email);
 		}
-		return q;
+		ArrayList<Object> ret = new ArrayList<>();
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
 
 	@Override
-	public String getUpdate() {
-		return
-			"name='"	 + name		+ "'," + 
-			"username='" + username + "'," +
-			"password='" + password + "'," + 
-			"email='"	 + email	+ "'"  ;
+	public ArrayList<Object> getUpdate() {
+		ArrayList<Object> ret = new ArrayList<>();
+		String q = "name=?,username=?,password=?,email=?";
+		ArrayList<Object> values = new ArrayList<>();
+		values.add(name);
+		values.add(username);
+		values.add(password);
+		values.add(email);
+		ret.add(q);
+		ret.add(values);
+		return ret;
 	}
     
 }
