@@ -23,6 +23,9 @@ public class http_request {
 			case "POST":
 				method = httpMethod.POST;
 			break;
+			case "OPTIONS":
+				method = httpMethod.OPTIONS;
+			break;
 		}
 		
 		String[] routeSlices = sliceRoute(firstLine[1]);

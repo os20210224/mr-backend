@@ -38,6 +38,10 @@ public class clientHandler extends Thread {
     private http_response handleRequest(http_request htp) throws Exception {
         ObjectMapper om = new ObjectMapper();
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
+		
+		if(htp.getMethod()==httpMethod.OPTIONS) {
+			return new http_response(200);
+		}
         
         if(htp.getMethod()==httpMethod.POST && htp.getRoute().equals("/login")){
 			try {
@@ -120,6 +124,10 @@ public class clientHandler extends Thread {
                     }
                 }
             }
+			case OPTIONS -> {
+				// TODO pametnija obrada ovoga
+				return new http_response(200);
+			}
         }
 		
         return new http_response(500);

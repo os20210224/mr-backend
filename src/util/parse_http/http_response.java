@@ -73,8 +73,8 @@ public class http_response {
 			"Content-Type: "				+ contentType									+ "\r\n" +
 			"Content-Length: "				+ body.getBytes(StandardCharsets.UTF_8).length	+ "\r\n" +
 			"Access-Control-Allow-Origin: "	+ accessControlOrigin							+ "\r\n" + 
-			"Access-Control-Allow-Methods: GET, POST"										+ "\r\n" + 
-			"Access-Control-Allow-Headers: Content-Type"									+ "\r\n" + 
+			"Access-Control-Allow-Methods: GET, POST, OPTIONS"								+ "\r\n" + 
+			"Access-Control-Allow-Headers: Content-Type, Authorization"						+ "\r\n" + 
 			"Connection: close\r\n\r\n"		+ body;
 	}
 	
