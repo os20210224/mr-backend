@@ -60,8 +60,8 @@ public class lobby extends Thread {
 		try {
 			char[] passphrase = System.getProperty("KEYSTORE_PASSWORD").toCharArray();
 			
-			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-			keyStore.load(new FileInputStream("mr-projekat-store"), passphrase);
+			KeyStore keyStore = KeyStore.getInstance("JKS");
+			keyStore.load(new FileInputStream("dev_key_store"), passphrase);
 			
 			KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 			keyManagerFactory.init(keyStore, passphrase);
