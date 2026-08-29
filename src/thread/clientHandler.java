@@ -1,7 +1,6 @@
 package thread;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -41,23 +40,23 @@ public class clientHandler extends Thread {
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
         
         if(htp.getMethod()==httpMethod.POST && htp.getRoute().equals("/login")){
-                        try {
-                            User user = om.readValue(htp.getBody(), User.class);
-                            List<User> users = Controller.getListUser(new User(user.getUsername()));
-                            if (users.size() == 0) {
-                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
-                            }
-                            User existing = users.get(0);
-                            if (!user.getPassword().equals(existing.getPassword())) {
-                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
-                            }
-                            String jwt = generateToken(existing.getIdUser());
-                            Object[] response = {existing, Map.of("token", jwt)};
-                            return new http_response(200, om.writeValueAsString(response));
-                        } catch (JsonProcessingException jsone) {
-                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
-                        }
-                    }
+			try {
+				User user = om.readValue(htp.getBody(), User.class);
+				List<User> users = Controller.getListUser(new User(user.getUsername()));
+				if (users.isEmpty()) {
+					return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
+				}
+				User existing = users.get(0);
+				if (!user.getPassword().equals(existing.getPassword())) {
+					return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
+				}
+				String jwt = generateToken(existing.getIdUser());
+				Object[] response = {existing, Map.of("token", jwt)};
+				return new http_response(200, om.writeValueAsString(response));
+			} catch (JsonProcessingException jsone) {
+				return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+			}
+		}
         String poruka=tokenHandle(htp.getHeader().getOrDefault("Authorization", "Unauthorised1"));
         if(!poruka.equals("")){
             return new http_response(401, om.writeValueAsString(Map.of("error", poruka)));
@@ -65,45 +64,30 @@ public class clientHandler extends Thread {
         switch (htp.getMethod()) {
             case GET -> {
                 switch (htp.getRoute()) {
-                    case "/" -> {
-                        String body
-                                = """
-								<html>
-									<head>
-										<title>Test</title>
-									</head>
-									<body>
-										<h1>""" + "muka i tuga" + "</h1>"
-                                + """
-									 </body>
-								 </html>
-							""";
-                        return new http_response(200, body);
-                    }
                     case "/user" -> {
                         List<User> users = Controller.getListUser(new User(htp.getId()));
-                        if (users.size() == 0 && htp.getId() != 0) {
+                        if (users.isEmpty() && htp.getId() != 0) {
                             return new http_response(404);
                         }
                         return new http_response(200, om.writeValueAsString(users)); // om-ova metoda pretvara objekat u json string
                     }
                     case "/throw" -> {
                         List<Throw> throwws = Controller.getListThrow(new Throw(htp.getId()));
-                        if (throwws.size() == 0 && htp.getId() != 0) {
+                        if (throwws.isEmpty() && htp.getId() != 0) {
                             return new http_response(404);
                         }
                         return new http_response(200, om.writeValueAsString(throwws));
                     }
                     case "/friend" -> {
                         List<User> friends = Controller.getListFriend(new User(htp.getId()));
-                        if (friends.size() == 0 && htp.getId() != 0) {
+                        if (friends.isEmpty() && htp.getId() != 0) {
                             return new http_response(404);
                         }
                         return new http_response(200, om.writeValueAsString(friends));
                     }
                     case "/friend/pending" -> {
                         List<User> friends = Controller.getListFriendPending(new User(htp.getId()));
-                        if (friends.size() == 0 && htp.getId() != 0) {
+                        if (friends.isEmpty() && htp.getId() != 0) {
                             return new http_response(404);
                         }
                         return new http_response(200, om.writeValueAsString(friends));
@@ -112,24 +96,6 @@ public class clientHandler extends Thread {
             }
             case POST -> {
                 switch (htp.getRoute()) {
-//                    case "/login" -> {
-//                        try {
-//                            User user = om.readValue(htp.getBody(), User.class);
-//                            List<User> users = Controller.getListUser(new User(user.getUsername()));
-//                            if (users.size() == 0) {
-//                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
-//                            }
-//                            User existing = users.get(0);
-//                            if (!user.getPassword().equals(existing.getPassword())) {
-//                                return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
-//                            }
-//                            String jwt = generateToken(existing.getIdUser());
-//                            Object[] response = {existing, Map.of("token", jwt)};
-//                            return new http_response(200, om.writeValueAsString(response));
-//                        } catch (JsonProcessingException jsone) {
-//                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
-//                        }
-//                    }
                     case "/user" -> {
                         try {
                             User user = om.readValue(htp.getBody(), User.class);
@@ -155,7 +121,7 @@ public class clientHandler extends Thread {
                 }
             }
         }
-
+		
         return new http_response(500);
     }
 
@@ -225,7 +191,7 @@ public class clientHandler extends Thread {
         return token;//xxxx.yyyyy.zzzzz
     }
 
-    private boolean decodeToken(String token) {
+    private boolean decodeToken(String token) { // ovo se ne koristi?? ~onjg
         try {
             String trenutniKljuc = "Sve_cu_da_pretvorim_u_pepeo_i_dim";
             Algorithm algorithm = Algorithm.HMAC256(trenutniKljuc);
@@ -256,7 +222,6 @@ public class clientHandler extends Thread {
                     .build();
             DecodedJWT jwt = verifier.verify(token[1]);
             return "";
-
         } catch (TokenExpiredException e) {
             System.out.println("Istekao je token");
             return "Token expired";
