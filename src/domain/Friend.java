@@ -1,5 +1,7 @@
 package domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class Friend extends AbstractObject {
@@ -7,7 +9,10 @@ public class Friend extends AbstractObject {
     private long friend;
     private FriendStatus status;
 
-    public Friend(long user, long friend, FriendStatus status) {
+    @JsonCreator public Friend(
+		@JsonProperty("user") long user,
+		@JsonProperty("friend") long friend,
+		@JsonProperty("status") FriendStatus status) {
         this.user = user;
         this.friend = friend;
         this.status = status;

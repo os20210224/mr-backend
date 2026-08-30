@@ -15,6 +15,8 @@ import java.io.OutputStreamWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import controller.Controller;
+import domain.Friend;
+import domain.FriendStatus;
 import domain.Throw;
 import domain.User;
 import java.util.Date;
@@ -104,7 +106,7 @@ public class clientHandler extends Thread {
                         try {
                             User user = om.readValue(htp.getBody(), User.class);
                             Long id = Controller.insertUser(user);
-                            return new http_response(201, om.writeValueAsString(Map.of("iduser", "id")));
+                            return new http_response(201, om.writeValueAsString(Map.of("idUser", "id")));
                         } catch (JsonProcessingException jsone) {
                             return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
                         } catch (SOException soe) {
@@ -117,7 +119,20 @@ public class clientHandler extends Thread {
                         // TODO
                     }
                     case "/friend" -> {
-                        // TODO
+                        try {
+							System.out.println(htp.getBody());
+							Friend friend = om.readValue(htp.getBody(), Friend.class);
+							friend.setStatus(FriendStatus.PENDING);
+							Controller.insertFriend(friend);
+							return new http_response(201, om.writeValueAsString(Map.of("message", "Friend request saved!")));
+						} catch (JsonProcessingException jsone) {
+							jsone.printStackTrace();
+							return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+						} catch (SOException soe) {
+                            if (soe.getMessage().contains("Duplicate entry")) {
+                                return new http_response(400, om.writeValueAsString(Map.of("error", "Request already sent")));
+                            }
+                        }
                     }
                     case "/friend/pending" -> {
                         // TODO
