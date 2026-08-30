@@ -33,6 +33,8 @@ public class lobby extends Thread {
 		try {
 			SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
 			serverSoket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(port);
+			serverSoket.setNeedClientAuth(false);
+			serverSoket.setWantClientAuth(false);
 		} catch (IOException ex) {
 			System.out.println("> Socket initialization error: " + ex.getMessage() + "\n");
 			ex.printStackTrace();
