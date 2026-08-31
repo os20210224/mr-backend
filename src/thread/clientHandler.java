@@ -124,7 +124,7 @@ public class clientHandler extends Thread {
                             String hash = BCrypt.hashpw(password, salt);
                             user.setPassword(hash);
                             Long id = Controller.insertUser(user);
-                            return new http_response(201, om.writeValueAsString(Map.of("idUser", "id")));
+                            return new http_response(201, om.writeValueAsString(Map.of("idUser", id)));
                         } catch (JsonProcessingException jsone) {
                             return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
                         } catch (SOException soe) {
