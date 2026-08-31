@@ -72,15 +72,16 @@ CREATE TABLE `User` (
   PRIMARY KEY (`idUser`),
   UNIQUE KEY `unique_username` (`username`),
   UNIQUE KEY `unique_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `User` */
 
 insert  into `User`(`idUser`,`name`,`username`,`password`,`email`) values 
-(1,'Mau Maunović Ulica Mau','mau','mau','mau@maunovic@uluca.mau'),
-(2,'Mina Minić Ulica Mina','mina','mina','mina@minic@ulica.mina'),
-(4,'Joca Kormilo','jk17','pihtije','joca.kormilo@ukleti.holandjanin'),
-(14,'api test','test','test','test@test.test');
+(1,'Mau Maunović Ulica Mau','mau','$2a$15$rgVlyCM/tC2JOzHT1DMvjuZzOkhBky7ZWO0NokFBl28Ze5lXEYZ1y','mau@maunovic@uluca.mau'),
+(2,'Mina Minić Ulica Mina','mina','$2a$15$gSAhsZTzBZj2uoIk0LvTpu/pzkNxSzCGhvEeGOFYoWR3Yc.LPB6EK','mina@minic@ulica.mina'),
+(4,'Joca Kormilo','jk17','$2a$15$rWs3sMTghwq1xYYSLpUBA.v3yDCQdLVC2KNi0S3S8KVKqeljOMLq2','joca.kormilo@ukleti.holandjanin'),
+(14,'api test','test','$2a$15$Iq1h/O9LSKt/yf7imfmLhOQeV2y/bKWdFDjEyWkigEaVpCYhC6Bk.','test@test.test'),
+(16,'api test 2','test 2','$2a$15$x3t7LgMwSYFfWTDDgVhpP.gr1rJ5LEo8weSnOrHp5FrT.7QOnrJbW','test2@test2.test2');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
