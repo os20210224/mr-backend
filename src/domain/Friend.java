@@ -8,14 +8,17 @@ public class Friend extends AbstractObject {
     private long user;
     private long friend;
     private FriendStatus status;
+	private long requested_by;
 
     @JsonCreator public Friend(
 		@JsonProperty("user") long user,
 		@JsonProperty("friend") long friend,
-		@JsonProperty("status") FriendStatus status) {
+		@JsonProperty("status") FriendStatus status,
+		@JsonProperty("requested_by") long requested_by) {
         this.user = user;
         this.friend = friend;
         this.status = status;
+		this.requested_by = requested_by;
     }
 
     public Friend(long user) {
@@ -46,6 +49,14 @@ public class Friend extends AbstractObject {
         this.status = status;
     }
 
+	public long getRequested_by() {
+		return requested_by;
+	}
+
+	public void setRequested_by(long requested_by) {
+		this.requested_by = requested_by;
+	}
+
     @Override
     public String getTableName() {
         return "Friend";
@@ -54,11 +65,12 @@ public class Friend extends AbstractObject {
     @Override
 	public ArrayList<Object> getInsert() {
 		ArrayList<Object> ret = new ArrayList<>();
-        String q = " (user,friend,status) VALUES(?,?,?)";
+        String q = " (user,friend,status,requested_by) VALUES(?,?,?,?)";
 		ArrayList<Object> values = new ArrayList<>();
 		values.add(user);
 		values.add(friend);
 		values.add(status.toString());
+		values.add(requested_by);
 		ret.add(q);
 		ret.add(values);
 		return ret;
