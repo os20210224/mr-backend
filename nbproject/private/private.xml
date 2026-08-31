@@ -2,17 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group name="back_mrzrs">
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/util/parse_http/httpMethod.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/db/dbBroker.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/domain/User.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/main/server.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/so/AbstractSO.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/so/SOException.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/controller/Controller.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/so/friend/getListFriend.java</file>
-            <file>file:/home/jevrozim/NetBeansProjects/back_mrzrs/mr-backend/src/thread/clientHandler.java</file>
-        </group>
         <group name="mr-backend">
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/db/dbBroker.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/domain/AbstractObject.java</file>
@@ -27,5 +16,6 @@
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/util/parse_http/httpMethod.java</file>
             <file>file:/mnt/sdc2/projekti/code/NetBeans/mr-backend/mr-backend/src/so/AbstractSO.java</file>
         </group>
+        <group name="back_mrzrs"/>
     </open-files>
 </project-private>

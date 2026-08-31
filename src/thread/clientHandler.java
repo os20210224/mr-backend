@@ -41,10 +41,10 @@ public class clientHandler extends Thread {
     private http_response handleRequest(http_request htp) throws Exception {
         ObjectMapper om = new ObjectMapper();
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // da bi se datum jsonovao citljivo
-		
-		if(htp.getMethod()==httpMethod.OPTIONS) {
-			// TEMP
-			// korisceno da heshira sifre koje su se vec nalazile u bazi
+
+        if (htp.getMethod() == httpMethod.OPTIONS) {
+            // TEMP
+            // korisceno da heshira sifre koje su se vec nalazile u bazi
 //			if (htp.getRoute().equals("/hash-existing")) {
 //				List<User> users = Controller.getListUser(new User(0));
 //				for (User user : users) {
@@ -55,30 +55,30 @@ public class clientHandler extends Thread {
 //					System.out.println("USER UPDATED");
 //				}
 //			}
-			// END TEMP
-			return new http_response(200);
-		}
-        
-        if(htp.getMethod()==httpMethod.POST && htp.getRoute().equals("/login")){
-			try {
-				User user = om.readValue(htp.getBody(), User.class);
-				List<User> users = Controller.getListUser(new User(user.getUsername()));
-				if (users.isEmpty()) {
-					return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
-				}
-				User existing = users.get(0);
-				if (!BCrypt.checkpw(user.getPassword(), existing.getPassword())) {
-					return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
-				}
-				String jwt = generateToken(existing.getIdUser());
-				Object[] response = {existing, Map.of("token", jwt)};
-				return new http_response(200, om.writeValueAsString(response));
-			} catch (JsonProcessingException jsone) {
-				return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
-			}
-		}
-        String poruka=tokenHandle(htp.getHeader().getOrDefault("Authorization", "Unauthorised1"));
-        if(!poruka.equals("")){
+            // END TEMP
+            return new http_response(200);
+        }
+
+        if (htp.getMethod() == httpMethod.POST && htp.getRoute().equals("/login")) {
+            try {
+                User user = om.readValue(htp.getBody(), User.class);
+                List<User> users = Controller.getListUser(new User(user.getUsername()));
+                if (users.isEmpty()) {
+                    return new http_response(403, om.writeValueAsString(Map.of("error", "wrog username")));
+                }
+                User existing = users.get(0);
+                if (!BCrypt.checkpw(user.getPassword(), existing.getPassword())) {
+                    return new http_response(403, om.writeValueAsString(Map.of("error", "wrong password")));
+                }
+                String jwt = generateToken(existing.getIdUser());
+                Object[] response = {existing, Map.of("token", jwt)};
+                return new http_response(200, om.writeValueAsString(response));
+            } catch (JsonProcessingException jsone) {
+                return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+            }
+        }
+        String poruka = tokenHandle(htp.getHeader().getOrDefault("Authorization", "Unauthorised1"));
+        if (!poruka.equals("")) {
             return new http_response(401, om.writeValueAsString(Map.of("error", poruka)));
         }
         switch (htp.getMethod()) {
@@ -119,10 +119,10 @@ public class clientHandler extends Thread {
                     case "/user" -> {
                         try {
                             User user = om.readValue(htp.getBody(), User.class);
-							String password = user.getPassword();
-							String salt = BCrypt.gensalt(15);
-							String hash = BCrypt.hashpw(password, salt);
-							user.setPassword(hash);
+                            String password = user.getPassword();
+                            String salt = BCrypt.gensalt(15);
+                            String hash = BCrypt.hashpw(password, salt);
+                            user.setPassword(hash);
                             Long id = Controller.insertUser(user);
                             return new http_response(201, om.writeValueAsString(Map.of("idUser", "id")));
                         } catch (JsonProcessingException jsone) {
@@ -138,15 +138,15 @@ public class clientHandler extends Thread {
                     }
                     case "/friend" -> {
                         try {
-							System.out.println(htp.getBody());
-							Friend friend = om.readValue(htp.getBody(), Friend.class);
-							friend.setStatus(FriendStatus.PENDING);
-							Controller.insertFriend(friend);
-							return new http_response(201, om.writeValueAsString(Map.of("message", "Friend request saved!")));
-						} catch (JsonProcessingException jsone) {
-							jsone.printStackTrace();
-							return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
-						} catch (SOException soe) {
+                            System.out.println(htp.getBody());
+                            Friend friend = om.readValue(htp.getBody(), Friend.class);
+                            friend.setStatus(FriendStatus.PENDING);
+                            Controller.insertFriend(friend);
+                            return new http_response(201, om.writeValueAsString(Map.of("message", "Friend request saved!")));
+                        } catch (JsonProcessingException jsone) {
+                            jsone.printStackTrace();
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+                        } catch (SOException soe) {
                             if (soe.getMessage().contains("Duplicate entry")) {
                                 return new http_response(400, om.writeValueAsString(Map.of("error", "Request already sent")));
                             }
@@ -157,29 +157,47 @@ public class clientHandler extends Thread {
                     }
                 }
             }
-			case OPTIONS -> {
-				// TODO pametnija obrada ovoga
-				return new http_response(200);
-			}
-			case PUT -> {
-				switch (htp.getRoute()) {
-					case "/friend" -> {
-						try {
-							System.out.println(htp.getBody());
-							Friend friend = om.readValue(htp.getBody(), Friend.class);
-							Controller.updateFriend(friend);
-							return new http_response(200, om.writeValueAsString(Map.of("message", "Friend request updated!")));
-						} catch (JsonProcessingException jsone) {
-							jsone.printStackTrace();
-							return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
-						} catch (SOException soe) {
+            case OPTIONS -> {
+                // TODO pametnija obrada ovoga
+                return new http_response(200);
+            }
+            case PUT -> {
+                switch (htp.getRoute()) {
+                    case "/friend" -> {
+                        try {
+                            System.out.println(htp.getBody());
+                            Friend friend = om.readValue(htp.getBody(), Friend.class);
+                            Controller.updateFriend(friend);
+                            return new http_response(200, om.writeValueAsString(Map.of("message", "Friend request updated!")));
+                        } catch (JsonProcessingException jsone) {
+                            jsone.printStackTrace();
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+                        } catch (SOException soe) {
                             return new http_response(400, om.writeValueAsString(Map.of("error", "Could not update friend")));
                         }
-					}
-				}
-			}
+                    }
+                }
+            }
+            case DELETE->{
+                switch(htp.getRoute()){
+                    case "/friend" ->{
+                        try{
+                        System.out.println(htp.getBody());
+                        Friend friend=om.readValue(htp.getBody(), Friend.class);
+                        Controller.deleteFriend(friend);
+                        return new http_response(200,om.writeValueAsString(Map.of("message", "Friend removed")));
+                        }catch(JsonProcessingException e){
+                            e.printStackTrace();
+                            return new http_response(400,om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+                        }catch(SOException e){
+                            return new http_response(400,om.writeValueAsString(Map.of("error", "Colud not delete user from friends")));
+                        }
+                    }
+                        
+                }
+            }
         }
-		
+
         return new http_response(500);
     }
 
@@ -264,11 +282,9 @@ public class clientHandler extends Thread {
         }
     }
 
-    
-
     private String tokenHandle(String header) {
-        String[] token=header.split(" ");
-        if(token.length==1){
+        String[] token = header.split(" ");
+        if (token.length == 1) {
             return "Unauthorised";
         }
         try {
@@ -286,8 +302,8 @@ public class clientHandler extends Thread {
         } catch (JWTVerificationException e) {
             System.out.println("Nije verifikovan");
             return "Unauthorised";
-        }catch(Exception e){
-            System.out.println("Nepredvidjeni izuzetak "+e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Nepredvidjeni izuzetak " + e.getMessage());
             return "Idk man i just work here";
         }
     }

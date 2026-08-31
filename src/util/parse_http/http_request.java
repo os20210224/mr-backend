@@ -21,6 +21,7 @@ public class http_request {
 			case "POST" -> method = httpMethod.POST;
 			case "OPTIONS" -> method = httpMethod.OPTIONS;
 			case "PUT" -> method = httpMethod.PUT;
+                        case "DELETE" -> method=httpMethod.DELETE;
 		}
 		
 		String[] routeSlices = sliceRoute(firstLine[1]);
