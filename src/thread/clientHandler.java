@@ -143,6 +143,23 @@ public class clientHandler extends Thread {
 				// TODO pametnija obrada ovoga
 				return new http_response(200);
 			}
+			case PUT -> {
+				switch (htp.getRoute()) {
+					case "/friend" -> {
+						try {
+							System.out.println(htp.getBody());
+							Friend friend = om.readValue(htp.getBody(), Friend.class);
+							Controller.updateFriend(friend);
+							return new http_response(200, om.writeValueAsString(Map.of("message", "Friend request updated!")));
+						} catch (JsonProcessingException jsone) {
+							jsone.printStackTrace();
+							return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+						} catch (SOException soe) {
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "Could not update friend")));
+                        }
+					}
+				}
+			}
         }
 		
         return new http_response(500);

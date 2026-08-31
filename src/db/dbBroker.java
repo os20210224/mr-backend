@@ -194,14 +194,18 @@ public class dbBroker {
 				SELECT * FROM User WHERE idUser IN (	
 					SELECT friend FROM Friend WHERE user=?
 					AND status='pending'
+					AND requested_by!=?
 				) OR idUser IN (
 					SELECT user FROM Friend WHERE friend=?
 					AND status='pending'
+					AND requested_by!=?
 				)""";
 			PreparedStatement s = connection.prepareStatement(q);
 			
 			s.setLong(1, user.getIdUser());
 			s.setLong(2, user.getIdUser());
+			s.setLong(3, user.getIdUser());
+			s.setLong(4, user.getIdUser());
 			
 			rs = s.executeQuery();
 		} catch (SQLException e) {

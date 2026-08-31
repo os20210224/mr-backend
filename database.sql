@@ -34,7 +34,9 @@ CREATE TABLE `Friend` (
 /*Data for the table `Friend` */
 
 insert  into `Friend`(`user`,`friend`,`status`,`requested_by`) values 
-(1,2,'friends',1);
+(1,2,'friends',1),
+(1,4,'friends',4),
+(2,4,'friends',2);
 
 /*Table structure for table `Throw` */
 

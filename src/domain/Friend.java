@@ -79,7 +79,7 @@ public class Friend extends AbstractObject {
 	@Override
 	public ArrayList<Object> getIDCondition() {
 		ArrayList<Object> ret = new ArrayList<>();
-		ret.add(" idUser=? AND idFriend=?");
+		ret.add(" user=? AND friend=?");
 		ArrayList<Object> values = new ArrayList<>();
 		values.add(user);
 		values.add(friend);

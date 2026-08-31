@@ -17,15 +17,10 @@ public class http_request {
 		String[] firstLine = lines[0].split(" ");
 		
 		switch (firstLine[0].trim()) {
-			case "GET":
-				method = httpMethod.GET;
-			break;
-			case "POST":
-				method = httpMethod.POST;
-			break;
-			case "OPTIONS":
-				method = httpMethod.OPTIONS;
-			break;
+			case "GET" -> method = httpMethod.GET;
+			case "POST" -> method = httpMethod.POST;
+			case "OPTIONS" -> method = httpMethod.OPTIONS;
+			case "PUT" -> method = httpMethod.PUT;
 		}
 		
 		String[] routeSlices = sliceRoute(firstLine[1]);
