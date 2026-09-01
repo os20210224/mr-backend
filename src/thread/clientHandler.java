@@ -58,6 +58,24 @@ public class clientHandler extends Thread {
             // END TEMP
             return new http_response(200);
         }
+        if (htp.getMethod() == httpMethod.POST && htp.getRoute().equals("/signup")) {
+            try {
+                User user = om.readValue(htp.getBody(), User.class);
+                String password = user.getPassword();
+                String salt = BCrypt.gensalt(15);
+                String hash = BCrypt.hashpw(password, salt);
+                user.setPassword(hash);
+                Long id = Controller.insertUser(user);
+                return new http_response(201, om.writeValueAsString(Map.of("idUser", id)));
+            } catch (JsonProcessingException jsone) {
+                return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
+            } catch (SOException soe) {
+                if (soe.getMessage().contains("Duplicate entry")) {
+                    return new http_response(400, om.writeValueAsString(Map.of("error", "username, password and email must be uniqe")));
+                }
+            }
+
+        }
 
         if (htp.getMethod() == httpMethod.POST && htp.getRoute().equals("/login")) {
             try {
@@ -81,6 +99,7 @@ public class clientHandler extends Thread {
         if (!poruka.equals("")) {
             return new http_response(401, om.writeValueAsString(Map.of("error", poruka)));
         }
+        
         switch (htp.getMethod()) {
             case GET -> {
                 switch (htp.getRoute()) {
@@ -116,23 +135,6 @@ public class clientHandler extends Thread {
             }
             case POST -> {
                 switch (htp.getRoute()) {
-                    case "/user" -> {
-                        try {
-                            User user = om.readValue(htp.getBody(), User.class);
-                            String password = user.getPassword();
-                            String salt = BCrypt.gensalt(15);
-                            String hash = BCrypt.hashpw(password, salt);
-                            user.setPassword(hash);
-                            Long id = Controller.insertUser(user);
-                            return new http_response(201, om.writeValueAsString(Map.of("idUser", id)));
-                        } catch (JsonProcessingException jsone) {
-                            return new http_response(400, om.writeValueAsString(Map.of("error", "User could not be parsed from json")));
-                        } catch (SOException soe) {
-                            if (soe.getMessage().contains("Duplicate entry")) {
-                                return new http_response(400, om.writeValueAsString(Map.of("error", "username, password and email must be uniqe")));
-                            }
-                        }
-                    }
                     case "/throw" -> {
                         // TODO
                     }
@@ -178,22 +180,22 @@ public class clientHandler extends Thread {
                     }
                 }
             }
-            case DELETE->{
-                switch(htp.getRoute()){
-                    case "/friend" ->{
-                        try{
-                        System.out.println(htp.getBody());
-                        Friend friend=om.readValue(htp.getBody(), Friend.class);
-                        Controller.deleteFriend(friend);
-                        return new http_response(200,om.writeValueAsString(Map.of("message", "Friend removed")));
-                        }catch(JsonProcessingException e){
+            case DELETE -> {
+                switch (htp.getRoute()) {
+                    case "/friend" -> {
+                        try {
+                            System.out.println(htp.getBody());
+                            Friend friend = om.readValue(htp.getBody(), Friend.class);
+                            Controller.deleteFriend(friend);
+                            return new http_response(200, om.writeValueAsString(Map.of("message", "Friend removed")));
+                        } catch (JsonProcessingException e) {
                             e.printStackTrace();
-                            return new http_response(400,om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
-                        }catch(SOException e){
-                            return new http_response(400,om.writeValueAsString(Map.of("error", "Colud not delete user from friends")));
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "Friend could not be parsed from json")));
+                        } catch (SOException e) {
+                            return new http_response(400, om.writeValueAsString(Map.of("error", "Colud not delete user from friends")));
                         }
                     }
-                        
+
                 }
             }
         }
